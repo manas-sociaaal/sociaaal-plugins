@@ -1,0 +1,273 @@
+# Known paths and per-app context for Winner Agent.
+# The skill MUST read this on startup. Each app has its own category, audience,
+# value prop, and trend search terms — the agent uses them to pull the right
+# trends and write the right concepts. NEVER assume an app fits the photo-AI
+# template.
+
+drive:
+  past_creatives_root: "Creative Assets/New Phase"
+  outputs_root: "Sociaaal/Winner Agent Outputs"
+  account: "creatives@sociaaal.com"
+
+chrome_profile:
+  name: "Manas' Sociaaal"
+  fallback_substring: "sociaaal"
+
+higgsfield:
+  mcp_prefix: "mcp__55741899-a1e0-4d8e-b872-6a16c866804a"
+  default_image_model: "nanobanana-pro-2"
+  default_video_model: "kling-3.0"
+
+budget:
+  llm_per_run_usd: 5.0
+  higgsfield_per_run_usd: 10.0
+  pause_on_overrun: true
+
+# ---------------------------------------------------------------------------
+# Per-app spec. Every Sociaaal app gets a row. Agent reads the row for the
+# target app, then SHAPES every downstream step around it: trend queries,
+# concept formats, audience tone, AI-asset capability.
+# ---------------------------------------------------------------------------
+
+apps:
+
+  BabyLab:
+    category: photo_ai
+    one_liner: "AI baby generator — merges two faces into a hypothetical baby."
+    audience: "Couples, families, celebrity-curious users, parents-to-be, Gen Z + millennials."
+    core_value: "See your future child or any pairing's baby in seconds."
+    trend_search_terms: ["ai baby", "baby generator", "celebrity baby", "future baby", "what would our baby look like", "couples filter"]
+    cultural_hooks: ["celebrity pairings", "couples reveal", "comment-bait pairings", "family lookalikes"]
+    format_strengths: ["face-merge reveal", "before/after", "split-screen pairings", "photo-to-image with motion"]
+    format_weaknesses: ["long talking head", "complex live action"]
+    ai_asset_fit: "Strong — NanoBanana handles the baby reveal still; Kling handles a subtle parallax / pulse zoom for impact."
+    typical_runtime_seconds: 12
+    sample_concepts: ["Crush Baby Reveal", "Celeb Couple Mashup", "Comment-bait Pairings"]
+
+  Celebs:
+    category: photo_ai
+    one_liner: "AI celebrity lookalike finder — upload a selfie, app shows which celeb you resemble."
+    audience: "Identity-curious users, Gen Z, social-app users, fan communities."
+    core_value: "Discover (and share) which celebrity you look like."
+    trend_search_terms: ["celebrity lookalike", "ai celebrity", "celeb match", "which celebrity do i look like", "lookalike challenge"]
+    cultural_hooks: ["currently-trending celebrities (movies/music releases)", "twin reveals", "POV reveals", "audience reaction tropes"]
+    format_strengths: ["selfie-to-celeb reveal", "side-by-side comparison", "trending audio over reveal"]
+    format_weaknesses: ["multi-character live action"]
+    ai_asset_fit: "Strong — celebrity face stills via NanoBanana, simple morph/match-cut motion via Kling."
+    typical_runtime_seconds: 10
+    sample_concepts: ["MJ Lookalike Challenge", "Celebrity Twin Reveal", "POV Lookalike"]
+
+  Voicify:
+    category: voice_ai
+    one_liner: "AI voice changer + celebrity voice clone — record audio, output sounds like the chosen voice."
+    audience: "Comedy/parody creators, kids/teens, prankster users, content makers."
+    core_value: "Make any voice into any other voice (yours, your dog's, a celeb's)."
+    trend_search_terms: ["ai voice changer", "celebrity voice", "voice clone", "ai voice trend", "morgan freeman ai", "celebrity narration"]
+    cultural_hooks: ["funny voiceovers on mundane content", "celebrity narrating stuff", "trending audio remixes", "pet voiceovers"]
+    format_strengths: ["before/after audio", "voice-over on existing footage", "screen-recording app demo with audio output"]
+    format_weaknesses: ["pure visual storytelling (this is an audio app — lean into sound)"]
+    ai_asset_fit: "Mixed — visuals can be AI but the punchline is auditory. Editor will need to dub final audio. AI assets: B-roll for the demo."
+    typical_runtime_seconds: 15
+    sample_concepts: ["Pet Narrator", "Celebrity Reads My Texts", "Voice Roast"]
+
+  Fontmaker:
+    category: keyboard_aesthetic
+    one_liner: "Custom font keyboard for iOS — aesthetic, handwriting, and novelty fonts in any app."
+    audience: "Gen Z (esp. teen girls), aesthetic-driven users, social bio decorators, students."
+    core_value: "Make every text/post/bio look styled, not default Helvetica."
+    trend_search_terms: ["aesthetic font", "fancy text", "instagram bio fonts", "iphone keyboard hack", "cute fonts", "aesthetic keyboard"]
+    cultural_hooks: ["bio aesthetics", "transformation reveals (boring → styled)", "girl-pop trends", "study aesthetic"]
+    format_strengths: ["screen-recording text transformation", "before/after typography", "POV 'I just got this app' reveals"]
+    format_weaknesses: ["complex live action — this is a screen-first app"]
+    ai_asset_fit: "Light — most shots are screen recordings. AI used for B-roll mood (aesthetic backgrounds, vibe footage)."
+    typical_runtime_seconds: 12
+    sample_concepts: ["Bio Glow Up", "Boring Texts → Cute Texts", "Aesthetic Keyboard Reveal"]
+
+  Litstick:
+    category: stickers_social
+    one_liner: "AI stickers + reactions library — custom sticker generator + iMessage stickers."
+    audience: "iMessage power-users, Gen Z, friend-group meme curators."
+    core_value: "Have the perfect sticker for every reaction or inside joke."
+    trend_search_terms: ["ai stickers", "imessage stickers", "custom stickers", "sticker maker", "reaction stickers"]
+    cultural_hooks: ["meme reactions", "trending phrases as stickers", "friend-group humor", "celebrity-as-stickers"]
+    format_strengths: ["iMessage screen recording with sticker reveals", "sticker explosion / collage motion", "before-after text conversation"]
+    format_weaknesses: ["realistic human footage"]
+    ai_asset_fit: "Strong for sticker concept stills. Motion clips show stickers floating/popping into a chat."
+    typical_runtime_seconds: 10
+    sample_concepts: ["AI Sticker Pack Drop", "Imessage Glow Up", "Reaction for Every Mood"]
+
+  AutoPaste:
+    category: keyboard_productivity
+    one_liner: "iOS keyboard with saved phrases / auto-fill — paste full templates with a tap."
+    audience: "Professionals, students, customer-service workers, anyone who types repetitive text."
+    core_value: "Stop retyping the same emails, addresses, replies."
+    trend_search_terms: ["iphone keyboard hack", "productivity hack", "save typing time", "iphone tips", "iphone tricks"]
+    cultural_hooks: ["productivity hack content", "iphone tips & tricks accounts", "before/after time-savings reveals"]
+    format_strengths: ["screen recording of typing → paste reveal", "stopwatch comparison", "talking-head productivity tip format"]
+    format_weaknesses: ["pure entertainment"]
+    ai_asset_fit: "Light — screen recordings dominate. AI used for stopwatch/clock motion, B-roll of typing."
+    typical_runtime_seconds: 18
+    sample_concepts: ["1-Tap Email Reply", "Stop Typing Your Address", "Customer Service Power Hack"]
+
+  Toned:
+    category: beauty_analysis
+    one_liner: "AI skin tone / undertone analyzer — photo-based color season analysis for makeup and fashion."
+    audience: "Beauty/fashion enthusiasts (esp. women 18-35), makeup buyers, color-curious users."
+    core_value: "Know your real undertone and color season — buy the right makeup, wear the right colors."
+    trend_search_terms: ["color analysis", "color season", "undertone test", "what colors look good on me", "skin tone analysis"]
+    cultural_hooks: ["color analysis trend (massive on TikTok)", "makeup hauls", "before/after color matching", "outfit transformations"]
+    format_strengths: ["selfie-to-palette reveal", "before/after color test", "outfit comparison with the right colors"]
+    format_weaknesses: ["voice-driven content"]
+    ai_asset_fit: "Strong — palette generation, color swatches, before/after color overlays."
+    typical_runtime_seconds: 14
+    sample_concepts: ["Find Your Color Season", "Wrong Colors → Right Colors", "Undertone Reveal"]
+
+  HeroMe:
+    category: photo_ai
+    one_liner: "AI superhero photo transformation — turns a selfie into a comic / movie superhero."
+    audience: "Marvel/DC fans, kids and teens, gaming-adjacent users, fandom communities."
+    core_value: "See yourself as a superhero in seconds."
+    trend_search_terms: ["ai superhero", "marvel ai", "comic book me", "ai art transformation"]
+    cultural_hooks: ["superhero movie releases", "comic-style aesthetics", "fan transformations"]
+    format_strengths: ["selfie-to-hero reveal", "morph transformation", "comic panel motion"]
+    format_weaknesses: ["dialogue-heavy"]
+    ai_asset_fit: "Excellent — full hero stills via NanoBanana, dramatic motion via Kling."
+    typical_runtime_seconds: 12
+    sample_concepts: ["Become Your Hero", "Comic Panel Reveal", "Hero of the Week"]
+
+  "Rizz God":
+    category: text_ai
+    one_liner: "AI pickup line generator — give it a context, get a line."
+    audience: "Gen Z dating users, content creators in dating-humor space, single guys 18-25."
+    core_value: "Never run out of clever opening lines."
+    trend_search_terms: ["rizz", "pickup lines", "dating app rizz", "what to say to her", "smooth lines"]
+    cultural_hooks: ["rizz culture (huge Gen Z trend)", "dating app screenshots", "before/after match reveals"]
+    format_strengths: ["dating-app screen recording", "POV girl-reading-text", "talking-head 'use this line' format"]
+    format_weaknesses: ["sincere/dramatic tone"]
+    ai_asset_fit: "Light to medium — chat screen mockups via NanoBanana, simple zooms via Kling."
+    typical_runtime_seconds: 12
+    sample_concepts: ["Rizz of the Week", "Dating App Glow-Up", "Use This Line"]
+
+  Cappuccino:
+    category: audio_social
+    one_liner: "Audio social app for keeping in touch with friends — daily voice notes with your group."
+    audience: "Close-friend groups, long-distance friends, Gen Z + millennials who hate texting."
+    core_value: "Stay close with the friends you don't see daily."
+    trend_search_terms: ["voice notes", "friend group apps", "stay in touch", "long distance friends", "daily catchup"]
+    cultural_hooks: ["friendship anniversary content", "long-distance friend reveals", "voice-note humor"]
+    format_strengths: ["audio-led storytelling with screen recording", "split-screen friend reactions", "POV listening to a voice note"]
+    format_weaknesses: ["fast cuts that lose the audio thread"]
+    ai_asset_fit: "Light — most footage is real friend interactions. AI for connecting B-roll, animated voice waves."
+    typical_runtime_seconds: 18
+    sample_concepts: ["Best Friend Voice Notes", "Long Distance, Daily Touch", "Listen to This"]
+
+  Vibe:
+    category: social_discovery
+    one_liner: "Find Snapchat friends — social discovery for Snap users."
+    audience: "Active Snapchat users, teens, social-extroverted Gen Z."
+    core_value: "Find new friends to Snap."
+    trend_search_terms: ["new snap friends", "social discovery", "snapchat tips", "make new friends online"]
+    cultural_hooks: ["social-discovery trend", "POV-style first-encounter videos"]
+    format_strengths: ["screen-recording app demo", "POV first-snap reveal"]
+    format_weaknesses: ["content that needs deep narrative"]
+    ai_asset_fit: "Light — most is screen UI. AI for vibe shots."
+    typical_runtime_seconds: 10
+    sample_concepts: ["First Snap Friend Reveal", "From 0 to 50 Friends", "Snap Buddy Match"]
+
+  "Caption AI":
+    category: text_ai
+    one_liner: "AI caption generator for social posts — describe the photo, get a caption."
+    audience: "Social-media-active users, content creators, small businesses."
+    core_value: "Never struggle for a caption again."
+    trend_search_terms: ["instagram captions", "caption ideas", "ai caption", "what to caption", "social media tips"]
+    cultural_hooks: ["aesthetic-creator content", "caption-of-the-day series"]
+    format_strengths: ["before/after caption reveal", "screen recording of generation"]
+    format_weaknesses: ["live action heavy"]
+    ai_asset_fit: "Medium — generation screen recordings + AI-stylized photo backdrops."
+    typical_runtime_seconds: 12
+    sample_concepts: ["Caption Generator Reveal", "Bad Caption → Good Caption", "Niche Caption Hack"]
+
+  "Dream Wise AI":
+    category: spiritual_ai
+    one_liner: "AI dream interpretation — describe your dream, get an analysis."
+    audience: "Spiritually-curious users, Gen Z + millennials interested in psychology/manifestation, women 18-40."
+    core_value: "Decode what your dreams actually mean."
+    trend_search_terms: ["dream meaning", "lucid dreaming", "spiritual tiktok", "subconscious", "manifesting"]
+    cultural_hooks: ["dream-meaning trend", "POV mystical content", "tarot/psychic-adjacent content"]
+    format_strengths: ["mystical visual storytelling", "voiceover over dreamy visuals", "screen recording of the analysis"]
+    format_weaknesses: ["fast/funny content (audience is contemplative)"]
+    ai_asset_fit: "Excellent — surreal dreamscapes via NanoBanana + slow Kling motion is on-brand."
+    typical_runtime_seconds: 18
+    sample_concepts: ["Decode Your Dream", "What Your Recurring Dream Means", "Mystical Dream Reveal"]
+
+  "Holy Guides":
+    category: religious
+    one_liner: "Bible verses + devotionals — daily Christian content."
+    audience: "Christian users, family-oriented, content seekers in faith-based niche."
+    core_value: "Daily faith content tailored to you."
+    trend_search_terms: ["daily verse", "christian tiktok", "scripture for today", "bible app", "devotional"]
+    cultural_hooks: ["faith-based content (large under-served niche)", "verse-of-the-day series"]
+    format_strengths: ["text-on-image verses", "voice-over devotional", "calming nature B-roll"]
+    format_weaknesses: ["humor or irreverent tone"]
+    ai_asset_fit: "Strong — peaceful AI imagery (sunrise, nature, light) + slow zoom motion."
+    typical_runtime_seconds: 18
+    sample_concepts: ["Verse for Today", "When You Need Hope", "Daily Light"]
+
+  Remindful:
+    category: productivity
+    one_liner: "Milestone reminder app — never forget anniversaries, birthdays, occasions."
+    audience: "Busy adults, partners, parents, professionals."
+    core_value: "Never forget the important date again."
+    trend_search_terms: ["forgot anniversary", "relationship hack", "remember dates", "reminder app", "iphone tips"]
+    cultural_hooks: ["forgot-anniversary jokes", "relationship-saving hacks", "productivity tips"]
+    format_strengths: ["POV husband/partner saved by the app", "screen recording of setup", "talking-head hack format"]
+    format_weaknesses: ["abstract storytelling"]
+    ai_asset_fit: "Light — mostly screen recordings + AI calendar/clock B-roll."
+    typical_runtime_seconds: 15
+    sample_concepts: ["Saved By Remindful", "Husband Hack", "Never Forget Again"]
+
+  "hot spotsss":
+    category: dating_adjacent_social
+    one_liner: "Niche social/dating-adjacent discovery."
+    audience: "Niche audience — agent should ask user for clarification on first run."
+    core_value: "Help the user discover new people/places (clarify with user before generating concepts)."
+    trend_search_terms: ["new connections", "social discovery", "dating apps"]
+    cultural_hooks: []
+    format_strengths: ["screen recording demo"]
+    format_weaknesses: []
+    ai_asset_fit: "Unknown — confirm with user before running."
+    typical_runtime_seconds: 12
+    sample_concepts: []
+    notes: "Spec is thin. Agent SHOULD ask user about audience + value prop on first run for this app."
+
+  Fontkey:
+    category: keyboard_aesthetic
+    one_liner: "Fonts keyboard with emoji — aesthetic + emoji combos for social/messaging."
+    audience: "Gen Z social-media users, similar to Fontmaker but with stronger emoji play."
+    core_value: "Express yourself with fonts AND emojis in any app."
+    trend_search_terms: ["aesthetic keyboard", "emoji combos", "cute fonts", "iphone keyboard hack"]
+    cultural_hooks: ["emoji-combo trends", "aesthetic-keyboard reveals"]
+    format_strengths: ["screen recording text transformation", "POV bio reveal"]
+    format_weaknesses: ["live action"]
+    ai_asset_fit: "Light — screen-first like Fontmaker. AI used for B-roll vibe."
+    typical_runtime_seconds: 10
+    sample_concepts: ["Emoji Combo Drop", "Aesthetic Keyboard + Emoji"]
+
+# ---------------------------------------------------------------------------
+# Trend sources — same for all apps, but the QUERIES the agent runs against
+# them differ per app (use trend_search_terms above to seed queries).
+# ---------------------------------------------------------------------------
+
+trend_sources:
+  - name: tiktok_creative_center_hashtags
+    url: "https://ads.tiktok.com/business/creativecenter/inspiration/popular/hashtag/pc/en"
+  - name: tiktok_creative_center_sounds
+    url: "https://ads.tiktok.com/business/creativecenter/inspiration/popular/music/pc/en"
+  - name: tiktok_creative_center_top_ads
+    url: "https://ads.tiktok.com/business/creativecenter/topads/pc/en"
+  - name: meta_ad_library
+    url_template: "https://www.facebook.com/ads/library/?country=US&q={query}"
+  - name: tiktok_hashtag_videos
+    url_template: "https://www.tiktok.com/tag/{hashtag}"
+  - name: instagram_explore
+    url_template: "https://www.instagram.com/explore/tags/{hashtag}/"

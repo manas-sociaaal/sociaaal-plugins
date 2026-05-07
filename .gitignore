@@ -1,0 +1,13 @@
+# Per-user run data (each member's local runs)
+plugins/*/skills/*/data/
+!plugins/*/skills/*/data/.gitkeep
+
+# OS junk
+.DS_Store
+*.pyc
+__pycache__/
+
+# Editor junk
+.vscode/
+.idea/
+*.swp

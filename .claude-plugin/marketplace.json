@@ -1,0 +1,29 @@
+{
+  "name": "sociaaal-plugins",
+  "owner": {
+    "name": "Sociaaal LLC",
+    "email": "manas@sociaaal.com"
+  },
+  "metadata": {
+    "description": "Internal Claude Code plugins for the Sociaaal LLC team. Creative ops, research, and production automation for our consumer AI app portfolio.",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "winner-agent",
+      "source": "./plugins/winner-agent",
+      "description": "Produces editor-ready video creative packages for any of our 17 Sociaaal apps. Researches trends across TikTok / Meta / Instagram via the operator's logged-in Chrome. Reads past creatives from Drive. Writes scripts + image prompts + video prompts. Generates AI assets via Higgsfield. Produces 5 concepts × 9 hook variations per run.",
+      "version": "0.1.0",
+      "category": "creative-ops",
+      "tags": [
+        "creative",
+        "ad-creative",
+        "tiktok",
+        "video-production",
+        "trend-research",
+        "ai-creative"
+      ],
+      "strict": false
+    }
+  ]
+}
