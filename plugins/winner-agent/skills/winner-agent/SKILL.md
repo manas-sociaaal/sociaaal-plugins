@@ -11,6 +11,19 @@ Each concept folder contains everything a video editor needs to assemble the fin
 
 **The 5 × 9 structure is non-negotiable.** Past P0_X batches in Drive (`PHASE GATE / NEW PHASE GATE / <App>/P0_X/C1..C5`) follow this exact shape, and the team's A/B testing cadence depends on it. If you can only confidently produce 3 high-quality concepts, push back and ask the user before shipping a degraded batch.
 
+## Human-in-the-loop checkpoints
+
+This is NOT a fully autonomous agent. **You pause at four explicit checkpoints during every run** to let the operator approve, redirect, or stop:
+
+1. **🛑 Research Review** — after pulling trends + past creatives, before synthesis
+2. **🛑 Concept Approval** — after picking 5 directions, before writing full packages
+3. **🛑 Asset Budget** — before the FIRST Higgsfield generation (the expensive step)
+4. **🛑 Final Review** — after saving to Drive, before announcing the run complete
+
+Each checkpoint is detailed inline with the relevant workflow step below. **Never skip a checkpoint, even if the user says "go" upfront** — the checkpoints catch errors and prevent waste. They cost ~zero in tokens / credits.
+
+If the user clearly wants a non-interactive batch run (e.g. "run for all 5 priority apps overnight"), they should say so explicitly; otherwise default to checkpoint mode.
+
 ## Apps you cover — every concept must be SHAPED by the target app's category
 
 Sociaaal LLC operates 17 apps across 7 distinct categories. **The same workflow runs for any app, but the trend queries, format choices, and AI-asset usage differ wildly by category.** Treating a voice-AI app like a photo-AI app produces garbage output.
@@ -164,6 +177,24 @@ If a different profile is selected, switch it before any navigation.
 
 If a source is blocked or requires login you don't have, log it as "skipped" in metadata and move on. Don't loop. **3-5 sources is enough.** Quality > quantity.
 
+### 🛑 CHECKPOINT 1 — Research Review (human-in-the-loop)
+
+Before going into synthesis, pause and show the user what the research surfaced. Use AskUserQuestion (or a clear chat-message summary if the harness doesn't support that tool) with this structure:
+
+**Format the summary:**
+- 3 bullets on currently-trending hashtags / sounds (with view counts and momentum direction)
+- 1-2 bullets on past-creative observations from Drive (formats heavily rotated, lanes still open)
+- 2-3 angles you're considering for the 5 concepts (1 line each, no full concepts yet)
+
+**Then ask:**
+- Are there trends I'm missing or overweighting?
+- Should I avoid any specific format / cultural reference this week?
+- Any specific angle to lean into harder?
+
+**Wait for the user's response.** If they say "go" / "proceed" / "looks good", continue. If they suggest changes, update your plan before Step 4.
+
+This checkpoint costs you ~0 Higgsfield credits and a single LLM turn but prevents wasted concept synthesis on the wrong direction.
+
 ### 4. Synthesis (LLM thinking — that's you)
 
 Pick **exactly 5 concept directions** for this app for this week. **Every concept must be shaped by the app's spec AND its research dossier (`research/<app>.md`).** Specifically:
@@ -191,6 +222,32 @@ Pick a portfolio that:
 - Spans different emotional drivers (curiosity, humor, parasocial, awe, validation, etc.)
 - Stays executable with our stack (NanoBanana stills + Kling/Seedance motion + Higgsfield workspace credits)
 - Respects what works for THIS app — not generic "viral content" templates
+
+### 🛑 CHECKPOINT 2 — Concept Approval (human-in-the-loop)
+
+You now have 5 concept directions in your head. **Do NOT start writing the full packages yet.** Show the user a one-page concept-pitch summary first.
+
+**Format the pitch:**
+
+For each of the 5 concepts:
+- **Concept name** (2-4 words)
+- **Trend lineage** (which hashtag/sound/cultural moment)
+- **Format** (face-merge reveal, side-by-side, audio-led morph, etc.)
+- **Why it fits this app** (1 sentence)
+- **Why it doesn't repeat past P0_X work** (1 sentence)
+
+**Then ask:**
+- Approve all 5? Or replace any?
+- Anything off-tone for the brand?
+- Any concept needs a different format / angle?
+
+**Wait for the user's response.** Common responses:
+- "Approve all" → proceed to Step 5
+- "Replace #2 with [new angle]" → swap that concept, re-confirm, then proceed
+- "Drop #4, give me 5 different ones" → restart synthesis (retain learnings from checkpoint 1)
+- "Run with these 4, skip #5" → ask explicitly if they want only 4 (breaks the 5×9 contract; confirm before proceeding)
+
+This checkpoint prevents wasting ~1500 LLM tokens × 5 concepts × asset gen costs on directions the human would have killed.
 
 ### 5. For each concept, produce the full package
 
@@ -224,6 +281,29 @@ Inside, write these files:
 - Numbered to match storyboard shots
 - Each prompt: motion description, duration (3-10s), seed image (if image-to-video)
 - Specify model: `kling-3.0` for realistic, `seedance-2.0` for stylized, `kling-motion-control` for character-locked
+
+### 🛑 CHECKPOINT 3 — Asset Budget Approval (human-in-the-loop)
+
+Right before generating the FIRST AI asset on Higgsfield, pause and confirm spend.
+
+**Compute and show the user:**
+- Total AI images to generate (sum across all 5 concepts) and rough credit cost (NanoBanana Pro ≈ 15-25 credits each)
+- Total AI videos to generate and rough credit cost (Kling 3.0 ≈ 50-150 credits each, depends on duration)
+- Estimated total credit burn for the run
+- Current Higgsfield balance (from the `balance` tool)
+- Estimated credits remaining after this run
+
+**Then ask:**
+- "Approve full asset generation?" (default — most runs)
+- "Generate only for concepts [list] — skip the rest" (partial)
+- "Skip generation for now — I'll review the prompts in Drive first" (text-only mode)
+- "Stop the run here, I want to revise prompts before generating"
+
+**Wait for the user's response.** If approved, proceed to generate. If partial, generate only the approved subset. If stopped/skipped, write all the text files (scripts, prompts, etc.) to Drive but skip the `05_AI_Images/` and `06_AI_Videos/` folders — flag them as "pending generation" in `_RUN_METADATA.json`.
+
+This is THE most expensive step in the run. Always pause here.
+
+---
 
 **`05_AI_Images/`** — Actual generated images. Use the Higgsfield MCP for image generation:
 
@@ -292,14 +372,38 @@ Format the file as:
 }
 ```
 
+### 🛑 CHECKPOINT 4 — Final Review (human-in-the-loop)
+
+After everything is saved to Drive but BEFORE you announce the run as complete, give the user a final review window.
+
+**Show the user:**
+- Drive folder URL for the parent week folder (linkable)
+- Per-concept: name + 1-line trend lineage + folder URL
+- Asset summary: # AI images generated, # AI videos generated
+- Total cost so far (LLM tokens + Higgsfield credits)
+- Any sources that were skipped during research
+- Any concepts where you flagged borderline content (legal, brand-safety) that needs human review
+- Anything that didn't generate / failed
+
+**Then ask:**
+- "Sign off as ready for the editor?" (default)
+- "Want me to fix anything before I notify the team?"
+- "Should I regenerate any specific asset?"
+- "Need a different format / length on any concept?"
+
+**Wait for the user's response.** If approved, post a brief Slack-style message they can paste to the team / editor. If they want fixes, address them and re-show the summary.
+
+This is the cheapest checkpoint (text only, no spend) and catches anything weird before the editor sees it.
+
 ### 6. Final report to user
 
-When all concepts are saved, respond to the user with:
+After Checkpoint 4 is signed off, output the final report:
 - Drive folder URL for the parent week folder
 - Per-concept: name + 1-line trend lineage + folder URL
 - Total cost estimate (LLM tokens + Higgsfield credits)
 - Any sources that were skipped
 - Any concepts where you flagged borderline content that needs human review
+- A copy-paste-ready Slack message announcing the run for the team channel
 
 ## Tools you use
 
