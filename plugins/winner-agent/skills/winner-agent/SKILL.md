@@ -84,12 +84,13 @@ Sociaaal LLC operates 17 apps across 7 distinct categories. **The same workflow 
 
 ## Strategy (read this every run)
 
-**DO NOT copy competitors. RIDE TRENDS.** Sociaaal's edge is moving fast on cultural moments with novel AI app formats. Your job is to spot the moment and translate it into a concept that fits the target app.
+**ADAPT GENERAL TRENDS, DON'T SEARCH NICHE.** Sociaaal's edge is being the first AI app to ride a non-AI cultural trend. Your job is to spot what's loud generally — the trending sounds, hashtags, formats, and cultural moments people are actually paying attention to this week — then bend that vehicle to deliver the target app's value prop.
 
-Three rules:
-1. **Trend-first.** Concepts must be tied to a specific currently-trending hashtag, sound, format, or cultural moment. Cite the trend in the concept.
-2. **Past-creative-aware.** Read past work in Drive. Don't repeat formats already done for this app in the last 60 days.
-3. **AI-native formats.** Lean into formats that AI image+video gen handles well (transformations, reveals, before/afters, POV) and away from formats that need real humans (long talking-head, complex live action). When real humans are needed, flag it for the editor.
+Four rules:
+1. **General trend first, app filter second.** Pull what's trending across all of TikTok / Meta / Instagram with NO app filter. Then filter the trend list through the app lens for adaptability. App-specific search terms are a fallback only, not the primary signal.
+2. **The trend is the vehicle, the app is the payload.** Don't search for "celebrity lookalike" content. Watch what's loud. Then bend the format / sound / moment to deliver the app's core value prop.
+3. **Past-creative-aware.** Read past work in Drive. Don't repeat formats already done for this app in the last 60 days.
+4. **AI-native formats.** Lean into formats AI image+video gen handles well (transformations, reveals, before/afters, POV) and away from formats that need real humans. Flag real-footage needs for the editor.
 
 ## Workflow
 
@@ -133,95 +134,117 @@ What you're scanning for:
 - Briefs/scripts in the folder if any are already there
 - Repeated patterns to avoid
 
-### 3. Trend research (browser-driven, free, real)
+### 3. Trend research — TREND-FIRST, NOT APP-FIRST
 
-Use **Claude in Chrome MCP** (`mcp__Claude_in_Chrome__*`) to drive the user's real browser and pull trends. The user has VPN on so TikTok and other geoblocked sites are reachable.
+**This is the most important section. Read it carefully.**
 
-**Browser profile:** Always select the **"Manas' Sociaaal"** profile. This profile is logged into:
-- Google (Sociaaal Drive)
-- TikTok Creative Center
-- Pipiads (creatives@sociaaal.com)
-- Meta (for Ad Library)
+The mental model is: **what's trending generally, then how can we adapt it to the target app.** NOT "what's trending in the app's niche." General trends have 100x the volume and being the first AI app to ride a non-niche trend is where breakout creatives come from.
 
-If a different profile is selected, switch it before any navigation.
+Use **Claude in Chrome MCP** (`mcp__Claude_in_Chrome__*`) to drive the user's real browser. The user has VPN on so TikTok and other geoblocked sites are reachable. Select the **"Manas' Sociaaal"** profile (logged into Google, TikTok Creative Center, Meta).
 
-**Use the app's `trend_search_terms` and `cultural_hooks` from `known_paths.yaml` to seed every query.** Do NOT use generic "ai" queries — they return noise. Examples:
+#### Track A: General trends (PRIMARY SIGNAL — do this first, weight it heaviest)
 
-- For Voicify: search "voice changer", "celebrity voice", "ai voice trend" — NOT "ai baby"
-- For Toned: search "color analysis", "color season", "undertone test"
-- For Fontmaker: search "aesthetic font", "iphone keyboard hack"
+Pull what the internet is paying attention to this week, with NO app filter applied.
 
-**Sources, in priority order:**
+1. **TikTok Creative Center → Top Hashtags (no industry filter)** — `https://ads.tiktok.com/business/creativecenter/inspiration/popular/hashtag/pc/en`
+   - Capture top 20 trending hashtags overall (US, last 7 days). View counts + momentum direction.
 
-1. **TikTok Creative Center → Top Hashtags** — `https://ads.tiktok.com/business/creativecenter/inspiration/popular/hashtag/pc/en`
-   - First pass: capture top 10-15 *general* trending hashtags (US, 7 days). These are the cultural moments.
-   - Second pass: filter or search by industry matching the app's category. Capture 5-10 category-specific hashtags.
+2. **TikTok Creative Center → Top Songs (no filter)** — `/business/creativecenter/inspiration/popular/music/pc/en`
+   - Top 10 trending sounds. Duration, commercial-licensed flag, and the dominant format pattern (POV, transition, GRWM, wait-for-it, etc.).
 
-2. **TikTok Creative Center → Top Songs** — `/business/creativecenter/inspiration/popular/music/pc/en`
-   - Top 5-10 trending sounds. Note duration and commercial-licensed flag (matters for ads).
+3. **TikTok Creative Center → Top Ads (no industry filter)** — `/business/creativecenter/topads/pc/en`
+   - Top 10 ads regardless of category. Capture brand, view count, like count, format. We watch what advertisers are riding, even from unrelated categories — they're often a leading indicator.
 
-3. **TikTok Creative Center → Top Ads** — `/business/creativecenter/topads/pc/en`
-   - Filter to the industry that matches the app's category (Lifestyle, Photo & Video, Beauty, Entertainment, Productivity, etc.). Top 5-10 ads with brand, CTR, like count, video preview.
+4. **For the top 5-7 hashtags AND top 3 sounds, watch example videos** — `https://www.tiktok.com/tag/<hashtag>` and `https://www.tiktok.com/music/<sound-id>`
+   - 3-5 videos each. Capture creator handle, view count, caption, format pattern.
+   - **This is critical.** A hashtag name tells you nothing. The format pattern tells you everything. We need to know HOW creators are using the trend, not just THAT they are.
 
-4. **For each of the top 3 trending hashtags, fetch example videos** via Chrome MCP:
-   - Navigate to `https://www.tiktok.com/tag/<hashtag>`
-   - Capture top 3-5 videos per hashtag: creator handle, view count, caption, sound, video URL
-   - This is critical context for the LLM — it sees how creators ACTUALLY use the trend, not just the hashtag name.
+5. **Cultural beats this week** — what's the moment? Album drops, awards shows, sports finals, news, meme cycles, seasonal beats. A 15-second sweep of the TikTok For You feed and Instagram Explore is enough. We don't need formal sources for this; just observe.
 
-5. **Meta Ad Library** — `https://www.facebook.com/ads/library/?country=US&q=<query>`
-   - Run 2-3 queries seeded from the app's `trend_search_terms`.
-   - Capture brand names, ad copy first lines, ad creative format.
+#### Track B: App lens (LIGHT — used to filter, not to search)
 
-6. **Instagram explore** — `https://www.instagram.com/explore/tags/<hashtag>/` for the top hashtag
-   - Validates the trend crosses platforms.
+Read the Celebs (or whatever app) row in `known_paths.yaml` and the research dossier. We're NOT using these to drive search queries. We're using them as the lens we filter Track A through. Specifically we need:
 
-If a source is blocked or requires login you don't have, log it as "skipped" in metadata and move on. Don't loop. **3-5 sources is enough.** Quality > quantity.
+- Format strengths and weaknesses (what we can execute)
+- Audience (who the trend has to resonate with)
+- Core value prop (what the concept ultimately needs to deliver)
+- Don't-do list (tonal landmines)
+
+#### Track C: App-specific search (FALLBACK only)
+
+Run `app.trend_search_terms` queries on Meta Ad Library and TikTok ONLY if Track A doesn't surface enough adaptable trends. This is a backup, not the primary signal. Do not lead with it.
+
+#### Past creatives (filter, not search)
+
+Pull `Creative Assets / New Phase / <App>/` from Drive purely as a "don't repeat" filter. We're checking what formats we already shipped in the last 60 days so we don't re-pitch them. This is NOT a research source, it's a guardrail.
+
+#### Skip / don't loop
+
+If a source blocks or requires login: log "skipped" in metadata, move on. Don't loop. **5-7 trends with deep format observation beats 30 trends with names only.** Quality over quantity.
 
 ### 🛑 CHECKPOINT 1 — Research Review (human-in-the-loop)
 
 Before going into synthesis, pause and show the user what the research surfaced. Use AskUserQuestion (or a clear chat-message summary if the harness doesn't support that tool) with this structure:
 
-**Format the summary:**
-- 3 bullets on currently-trending hashtags / sounds (with view counts and momentum direction)
-- 1-2 bullets on past-creative observations from Drive (formats heavily rotated, lanes still open)
-- 2-3 angles you're considering for the 5 concepts (1 line each, no full concepts yet)
+**Format the summary (TREND-FIRST view):**
+
+1. **Top 10 general trends this week** — hashtag or sound name, view count, momentum direction (rising / peaking / declining), and the dominant format pattern observed in the example videos
+2. **Top 5 advertiser angles** — what brands across all categories are riding right now (1 line each)
+3. **Cultural beats** — 2-3 moments worth riding this week
+4. **Past-creative filter** — 1-2 bullets on what formats are burned for this app in the last 60 days
+5. **Adaptability ranking** — for each of the top 10 trends, score 1-5 on how adaptable it is to the target app. Surface the top 5 adaptable trends with a 1-line "how we'd bend it" for each. These become the 5 concept candidates.
 
 **Then ask:**
-- Are there trends I'm missing or overweighting?
-- Should I avoid any specific format / cultural reference this week?
-- Any specific angle to lean into harder?
+- Which of the top 5 adaptable trends should I develop into concepts? Approve all 5, swap any, or surface different ones from the broader list?
+- Any trend I'm overweighting or missing?
+- Any tone / format direction to lean into or avoid this week?
 
 **Wait for the user's response.** If they say "go" / "proceed" / "looks good", continue. If they suggest changes, update your plan before Step 4.
 
 This checkpoint costs you ~0 Higgsfield credits and a single LLM turn but prevents wasted concept synthesis on the wrong direction.
 
-### 4. Synthesis (LLM thinking — that's you)
+### 4. Synthesis — adapt general trends into concepts
 
-Pick **exactly 5 concept directions** for this app for this week. **Every concept must be shaped by the app's spec AND its research dossier (`research/<app>.md`).** Specifically:
+**This is where the trend-first model pays off.** You're not picking from a pool of app-niche trends. You're taking general trending formats / sounds / cultural moments and bending them into something that delivers the app's value prop.
 
-- Concept format must be in the app's `format_strengths`, NOT in `format_weaknesses`
-- Tone must match the audience (Gen Z humor for Rizz God ≠ contemplative for Dream Wise AI)
-- AI-asset usage must respect `ai_asset_fit` — don't propose all-AI concepts for an audio app
-- Concept duration target = `typical_runtime_seconds` from the spec
-- Trend lineage: pick from the cultural moments AND the app-specific hashtags you pulled
-- Avoid the formats the research dossier flags as "already burned" or "don't-do"
+The mental flow for each candidate concept:
 
-**You must produce 5 concepts.** If you can only generate 3 with confidence, pause and ask the user — don't ship a 3-concept batch.
+1. **Pick a trend from Track A** (general trend that scored high on adaptability at Checkpoint 1 and got operator approval)
+2. **Identify the format pattern** the trend uses (POV, wait-for-it, transition, GRWM, reaction, side-by-side, etc.)
+3. **Bend the format to deliver the app's core_value** — the trend is the vehicle, the app is the payload
+4. **Pressure-test against the app's filters:**
+   - Format must be in `format_strengths`, NOT `format_weaknesses`
+   - Tone must match audience (Gen Z humor for Rizz God vs contemplative for Dream Wise AI)
+   - AI-asset usage must respect `ai_asset_fit`
+   - Duration target = `typical_runtime_seconds`
+   - Doesn't repeat past 60-day work in Drive
+   - Doesn't violate the dossier's don't-do list
+
+**Examples of trend-to-app adaptation (this is the pattern to copy):**
+
+- "Wait for it" audio trending generally → Celebs concept "wait for the celeb match reveal"
+- "POV: if you were in [era]" trend trending generally → Celebs "POV: if you were in y2k, here's your celeb twin"
+- GRWM format peaking → Toned "GRWM but the app picks my color season"
+- A specific sound hitting the For You page → Voicify reveal lands on the beat drop
+- Meme template trending → Litstick swaps the punchline for an app sticker
+
+**You must produce exactly 5 concepts.** If you can only generate 3 with confidence, pause and ask the user. Don't ship a degraded batch.
 
 For each direction, write:
 
 - **Concept name** — 2-4 words, evocative
-- **Trend lineage** — exact hashtag/sound/competitor that inspired it, with view count or evidence
-- **Why it fits this app** — 1 sentence linking trend to the app's `core_value`
-- **Why it doesn't repeat past work** — reference what's already in `Creative Assets/New Phase/<App>/`
+- **Trend lineage** — exact hashtag, sound, or general format we're adapting, with view count + momentum from Track A
+- **Adaptation thesis** — 1 sentence on how we're bending the general trend to deliver the app's value prop
+- **Why it fits this app** — 1 sentence linking trend to `core_value`
+- **Why it doesn't repeat past work** — reference what's in `Creative Assets/New Phase/<App>/`
 - **Format** — must come from `format_strengths`
-- **AI-asset plan** — explicit list of what's AI vs what's real footage
+- **AI-asset plan** — what's AI vs real footage
 
-Pick a portfolio that:
-- Covers at least 2 different formats (don't make all 3 be the same)
-- Spans different emotional drivers (curiosity, humor, parasocial, awe, validation, etc.)
-- Stays executable with our stack (NanoBanana stills + Kling/Seedance motion + Higgsfield workspace credits)
-- Respects what works for THIS app — not generic "viral content" templates
+Portfolio rules across the 5:
+- Covers at least 2 different formats (don't make all 5 the same)
+- Spans different emotional drivers (curiosity, humor, parasocial, awe, validation)
+- Spans different trend types (don't pick 5 hashtag-driven concepts; mix sound, hashtag, format, cultural-moment)
+- Executable with our stack (NanoBanana + Kling + Seedance + Higgsfield credits)
 
 ### 🛑 CHECKPOINT 2 — Concept Approval (human-in-the-loop)
 
