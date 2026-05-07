@@ -1,7 +1,7 @@
 {
   "name": "winner-agent",
-  "version": "0.1.0",
-  "description": "Produces editor-ready video creative packages for Sociaaal LLC consumer AI apps. Researches trends across TikTok Creative Center, Meta Ad Library, and Instagram via the operator's logged-in Chrome. Reads past creatives from Google Drive. Writes scripts, image prompts, and video prompts. Generates AI assets via Higgsfield. Assembles editor-ready folders with 5 concepts × 9 hook variations each.",
+  "version": "0.2.0",
+  "description": "Produces editor-ready video creative packages for Sociaaal LLC consumer AI apps. Researches trends via the operator's logged-in Chrome (TikTok Creative Center, Meta Ad Library, Instagram). Reads past creatives from Google Drive AND a per-app research dossier (audience, value props, past-creative observations, cultural moments to ride, don't-do list). Produces exactly 5 concept directions × 9 hook variations each (45 deliverables per run). Writes scripts, image prompts, and video prompts. Generates AI assets via Higgsfield.",
   "author": {
     "name": "Manas Gaikwad",
     "email": "manas@sociaaal.com"
