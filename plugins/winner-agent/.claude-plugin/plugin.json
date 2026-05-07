@@ -1,7 +1,7 @@
 {
   "name": "winner-agent",
-  "version": "0.4.0",
-  "description": "Produces editor-ready video creative packages for Sociaaal LLC consumer AI apps. Adapts general TikTok/Meta/Instagram trends into app concepts (trend-first, not niche-first). Reads past creatives from Drive. Produces 5 concept directions x 9 hook variations per run. Generates AI assets via Higgsfield.",
+  "version": "0.5.0",
+  "description": "Produces editor-ready video creative packages for Sociaaal LLC consumer AI apps. Runs a five-pass trend discovery funnel pulling general AND app-specific trends in parallel, scored on a 25-point adaptability rubric. Reads past creatives from Drive. Produces 5 concept directions x 9 hook variations per run. Generates AI assets via Higgsfield.",
   "author": {
     "name": "Manas Gaikwad",
     "email": "manas@sociaaal.com"

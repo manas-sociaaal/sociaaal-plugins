@@ -13,7 +13,7 @@
       "name": "winner-agent",
       "source": "./plugins/winner-agent",
       "description": "Produces editor-ready video creative packages for any of our 17 Sociaaal apps. Researches trends across TikTok / Meta / Instagram via the operator's logged-in Chrome. Reads past creatives from Drive + per-app research dossier. Produces exactly 5 concepts × 9 hook variations per run (45 deliverables). Pauses at 4 human-in-the-loop checkpoints (research review, concept approval, asset budget, final review) so you stay in control. Generates AI assets via Higgsfield.",
-      "version": "0.4.0",
+      "version": "0.5.0",
       "category": "creative-ops",
       "tags": [
         "creative",
