@@ -52,14 +52,14 @@ Full docs: see [`plugins/winner-agent/README.md`](plugins/winner-agent/README.md
 
 ### tokportal
 
-Posts our organic content through TokPortal's managed, warmed TikTok and Instagram accounts. Includes TokPortal's official MCP server and a skill that schedules a finished carousel set (`01.png … NN.png` + `caption.txt`) as a TikTok photo carousel: dry run first, AI-content label on, no credits spent without your go.
+Posts our organic content through TokPortal's managed, warmed TikTok and Instagram accounts, using TokPortal's official CLI (`@tokportal/cli`). Includes a skill that schedules a finished carousel set (`01.png … NN.png` + `caption.txt`) as a TikTok photo carousel: dry run first, AI-content label on, no credits spent without your go.
 
 **Usage:** "schedule the Dre carousels on our TikTok account, one a day from Thursday"
 **Install:** `/plugin install tokportal@sociaaal-plugins`
 
 **Per-member prerequisites:**
 - `TOKPORTAL_API_KEY` in your environment (a key from app.tokportal.com/developer). Never paste it into chat or commit it.
-- Node 18+
+- Node 18+ (the CLI runs through `npm i -g @tokportal/cli@0.1.2` or `npx`)
 
 Full docs: see [`plugins/tokportal/README.md`](plugins/tokportal/README.md)
 

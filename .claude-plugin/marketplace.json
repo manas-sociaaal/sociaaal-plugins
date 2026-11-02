@@ -28,8 +28,8 @@
     {
       "name": "tokportal",
       "source": "./plugins/tokportal",
-      "description": "TokPortal for organic posting: the official TokPortal MCP server (warmed US TikTok and Instagram accounts, uploads, scheduling, analytics) plus a skill that schedules our finished carousel sets as TikTok photo carousels, dry run first, AI label on, credits confirmed before spend. Needs TOKPORTAL_API_KEY in your environment.",
-      "version": "0.1.0",
+      "description": "TokPortal for organic posting via TokPortal's official CLI (@tokportal/cli): warmed US TikTok and Instagram accounts, uploads, scheduling, analytics. Includes a skill that schedules our finished carousel sets as TikTok photo carousels, with a dry-run helper, the AI label on, and credits confirmed before spend. Needs TOKPORTAL_API_KEY in your environment.",
+      "version": "0.2.0",
       "category": "organic",
       "tags": [
         "organic",
