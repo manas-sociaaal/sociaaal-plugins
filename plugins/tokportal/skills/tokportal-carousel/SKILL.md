@@ -7,7 +7,7 @@ description: Schedule finished carousel sets (folders of 01.png … NN.png plus 
 
 TokPortal runs real, warmed TikTok and Instagram accounts on local phones. We never log into those accounts: we hand TokPortal the media, caption, sound and a publishing window, and their account manager posts it.
 
-Everything runs through the official CLI, `tokportal` (`@tokportal/cli` 0.1.2), from Bash. It reads the key from `TOKPORTAL_API_KEY`; never pass `--api-key` on the command line or print the key.
+Everything runs through the official CLI, `tokportal` (`@tokportal/cli` 0.1.2), from Bash, plus two plugin helpers for what the CLI can't do: `tp-dry-run.sh` and `tp-upload-image.sh`. It reads the key from `TOKPORTAL_API_KEY`; never pass `--api-key` on the command line or print the key.
 
 ```
 tokportal <command> [--id <uuid>] [--position <n>] [--body-file x.json | --body '<json>'] [--json]
@@ -47,9 +47,10 @@ It sends `X-TokPortal-Dry-Run: true`: full validation and the real price, nothin
 
 Input: a set folder with `01.png … NN.png` in upload order and `caption.txt` (the Drive layout `<week>/<App>/<set>/`).
 
-1. Upload each slide in file order:
-   `tokportal upload-image-direct --file 01.png --bundle-id <bundle> --purpose carousel --json`
-   Keep the returned **`storage_path`**, not `public_url`, in slide order.
+1. Upload each slide in file order with the plugin's helper (CLI 0.1.2's `upload-image-direct` sends no content type and TokPortal answers `UPLOAD_FAILED`):
+   `${CLAUDE_PLUGIN_ROOT}/scripts/tp-upload-image.sh 01.png <bundle> carousel`
+   Keep both `storage_path` and `public_url` per slide, in slide order. TokPortal's docs disagree on which one `carousel_images` takes (the tool description says `storage_path`, the upload response says `public_url`): dry-run the slot with `storage_path` first and switch to `public_url` only if the dry run rejects it.
+   A profile picture uses the same helper with `profile_picture`, and its `storage_path` goes in `profile_picture_url`.
 2. Write the slot body to a file, e.g. `slot.json`:
    ```json
    {

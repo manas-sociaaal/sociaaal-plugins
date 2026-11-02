@@ -29,7 +29,7 @@
       "name": "tokportal",
       "source": "./plugins/tokportal",
       "description": "TokPortal for organic posting via TokPortal's official CLI (@tokportal/cli): warmed US TikTok and Instagram accounts, uploads, scheduling, analytics. Includes a skill that schedules our finished carousel sets as TikTok photo carousels, with a dry-run helper, the AI label on, and credits confirmed before spend. Needs TOKPORTAL_API_KEY in your environment.",
-      "version": "0.2.0",
+      "version": "0.2.1",
       "category": "organic",
       "tags": [
         "organic",

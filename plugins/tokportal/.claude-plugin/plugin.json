@@ -1,6 +1,6 @@
 {
   "name": "tokportal",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Posts our organic content through TokPortal (managed, warmed US TikTok and Instagram accounts) using TokPortal's official CLI. Includes a skill that schedules finished carousel sets as TikTok photo carousels, with a dry-run helper so every paid step is priced before it runs, the AI label on, and no credits spent without the operator's go.",
   "author": {
     "name": "Manas Gaikwad",
