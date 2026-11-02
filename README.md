@@ -50,6 +50,21 @@ Full docs: see [`plugins/winner-agent/README.md`](plugins/winner-agent/README.md
 
 ---
 
+### tokportal
+
+Posts our organic content through TokPortal's managed, warmed TikTok and Instagram accounts. Includes TokPortal's official MCP server and a skill that schedules a finished carousel set (`01.png … NN.png` + `caption.txt`) as a TikTok photo carousel: dry run first, AI-content label on, no credits spent without your go.
+
+**Usage:** "schedule the Dre carousels on our TikTok account, one a day from Thursday"
+**Install:** `/plugin install tokportal@sociaaal-plugins`
+
+**Per-member prerequisites:**
+- `TOKPORTAL_API_KEY` in your environment (a key from app.tokportal.com/developer). Never paste it into chat or commit it.
+- Node 18+
+
+Full docs: see [`plugins/tokportal/README.md`](plugins/tokportal/README.md)
+
+---
+
 ## For maintainers — how to update a plugin
 
 When you change a plugin (edit `SKILL.md`, update `known_paths.yaml`, add a script, etc.):

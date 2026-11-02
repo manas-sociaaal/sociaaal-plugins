@@ -1,0 +1,11 @@
+{
+  "name": "tokportal",
+  "version": "0.1.0",
+  "description": "Connects Claude Code to TokPortal (managed, warmed US TikTok and Instagram accounts) through TokPortal's official MCP server, and adds a skill that schedules our finished carousel sets as TikTok photo carousels: dry run first, AI label on, credits confirmed before anything is spent.",
+  "author": {
+    "name": "Manas Gaikwad",
+    "email": "manas@sociaaal.com"
+  },
+  "license": "Proprietary",
+  "keywords": ["organic", "tiktok", "instagram", "carousel", "posting", "tokportal", "sociaaal"]
+}
