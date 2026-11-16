@@ -1,0 +1,264 @@
+#!/usr/bin/env python3
+"""OnlyFlow from the command line.
+
+OnlyFlow runs our TikTok/Instagram accounts on our own iPhones: we upload media and create tasks (a Post, Reel or
+Story for an account at a time), and the iPhone carries them out. OnlyFlow ships no CLI, only an MCP server
+(npm onlyflow-mcp) over its REST API at https://onlyflow.io/api/v1; this script calls the same routes the same way.
+
+Needs ONLYFLOW_API_KEY (OnlyFlow > Settings > MCP, organization owner). Never pass the key on the command line.
+Standard library only.
+
+  onlyflow status                         organization, iPhones, accounts, upcoming tasks
+  onlyflow accounts | devices | categories
+  onlyflow tasks [--status scheduled,overdue] [--limit N] [--json]
+  onlyflow task ID [ID ...]               everything a task holds
+  onlyflow upload FILE [FILE ...] [--together]
+  onlyflow post --account @user --images 01.png ... (1-6) --caption-file caption.txt [--music NAME]
+                [--ratio 9:16] [--at 2026-11-18T08:00:00-05:00 --tz America/New_York] [--warmup [--niche texting]]
+                [--dry-run]               upload + validate only with --dry-run; nothing is created
+  onlyflow set FOLDER --account @user [--slides 1,2,4,6,8,9] [same options as post]
+                                          a carousel set folder (01.png ... + caption.txt); max 6 slides
+  onlyflow plan --account @user --start 2026-11-18 --days 7 --from-hour 7 --to-hour 10 --tz America/New_York --count 7 \
+                --media-url URL           conflict-free times (creates nothing); URL = any from `onlyflow upload`
+  onlyflow cancel ID | restore ID | run-now ID
+  onlyflow reschedule ID ISO_TIME [--tz ZONE]
+  onlyflow delete ID [ID ...] --yes
+  onlyflow stats [--days 7] | videos [--account @user]
+"""
+import argparse
+import json
+import mimetypes
+import os
+import re
+import sys
+import urllib.error
+import urllib.request
+
+BASE = os.environ.get('ONLYFLOW_API_URL', 'https://onlyflow.io').rstrip('/') + '/api/v1'
+KEY = (os.environ.get('ONLYFLOW_API_KEY') or '').strip()
+TYPES = {'.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.png': 'image/png', '.webp': 'image/webp',
+         '.mp4': 'video/mp4', '.mov': 'video/quicktime'}
+
+
+class Fail(Exception):
+    pass
+
+
+def api(method, path, body=None, timeout=60):
+    if not KEY:
+        raise Fail('ONLYFLOW_API_KEY is not set. Create a key in OnlyFlow > Settings > MCP and put it in your environment.')
+    if not re.fullmatch(r'onlyflow_[A-Za-z0-9_-]{43}', KEY):
+        raise Fail('ONLYFLOW_API_KEY does not look like an OnlyFlow key ("onlyflow_" + 43 characters).')
+    data = None if body is None else json.dumps(body).encode()
+    req = urllib.request.Request(BASE + path, data=data, method=method,
+                                 headers={'authorization': f'Bearer {KEY}', 'content-type': 'application/json',
+                                          'user-agent': 'sociaaal-onlyflow-cli'})
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as r:
+            text = r.read().decode()
+    except urllib.error.HTTPError as e:
+        text = e.read().decode(errors='replace')
+        try:
+            msg = json.loads(text).get('error')
+        except ValueError:
+            msg = None
+        raise Fail(f'{method} {path.split("?")[0]}: {e.code} {msg or "no message (blocked before OnlyFlow, or OnlyFlow down)"}')
+    except urllib.error.URLError as e:
+        raise Fail(f'{method} {path.split("?")[0]}: unreachable ({e.reason})' +
+                   (' - it may still have gone through; check `onlyflow tasks` before retrying' if method != 'GET' else ''))
+    return json.loads(text) if text else None
+
+
+def every(path, limit=500):
+    out, offset = [], 0
+    for _ in range(50):
+        sep = '&' if '?' in path else '?'
+        page = api('GET', f'{path}{sep}limit={limit}&offset={offset}')
+        out += page['data']
+        if page.get('next_offset') is None:
+            return out
+        offset = page['next_offset']
+    return out
+
+
+def account(ref, platform='tiktok'):
+    accs = every('/accounts')
+    for a in accs:
+        if a['id'] == ref:
+            return a
+    name = ref.lstrip('@').lower()
+    hits = [a for a in accs if a['username'].lower() == name and (not platform or a['platform'] == platform)]
+    if len(hits) == 1:
+        return hits[0]
+    known = ', '.join(f"@{a['username']} ({a['platform']})" for a in accs) or 'none yet - add the account in OnlyFlow first'
+    raise Fail(f'no single {platform or ""} account "{ref}". Accounts: {known}')
+
+
+def upload(paths, together=False):
+    """prepare (presign) -> PUT each file -> confirm. together=True: one upload for the photos of one Post (1-6)."""
+    files = []
+    for p in paths:
+        ext = os.path.splitext(p)[1].lower()
+        if ext not in TYPES:
+            raise Fail(f'{p}: only .jpg .png .webp .mp4 .mov')
+        size = os.path.getsize(p)
+        if size > (100 if TYPES[ext].startswith('video') else 30) * 1048576:
+            raise Fail(f'{p}: too large ({size / 1048576:.1f} MB)')
+        files.append({'path': p, 'name': os.path.basename(p), 'type': TYPES[ext], 'size': size})
+    if together and len(files) > 6:
+        raise Fail('a Post takes 1-6 photos')
+    groups = [files] if together else [[f] for f in files]
+    urls = []
+    for g in groups:
+        pre = api('POST', '/media/presign', {'files': [{'name': f['name'], 'type': f['type'], 'size': f['size']} for f in g]})
+        for f, u in zip(g, pre['uploads']):
+            req = urllib.request.Request(u['url'], data=open(f['path'], 'rb').read(), method='PUT',
+                                         headers={'content-type': u['contentType']})
+            try:
+                urllib.request.urlopen(req, timeout=600).read()
+            except urllib.error.HTTPError as e:
+                raise Fail(f'storage refused {f["name"]} ({e.code})')
+        conf = api('POST', '/media/confirm', {'contentId': pre['contentId'],
+                                              'files': [{'key': u['key'], 'contentType': u['contentType']} for u in pre['uploads']]})
+        urls += conf['manifest']['urls']
+    return urls
+
+
+def create(tasks, dry_run):
+    """Validate first (?validate=1, nothing written); create only without --dry-run."""
+    checked = api('POST', '/tasks?validate=1', {'tasks': tasks})
+    if checked and checked.get('created'):      # an older OnlyFlow ignores validate=1 and creates
+        return checked['created'], True
+    if dry_run:
+        return None, False
+    return api('POST', '/tasks', {'tasks': tasks})['created'], True
+
+
+def post_task(a, images, args):
+    caption = open(args.caption_file).read().strip() if args.caption_file else args.caption
+    if not caption:
+        raise Fail('a Post needs a caption (--caption-file or --caption)')
+    if not 1 <= len(images) <= 6:
+        raise Fail(f'a Post takes 1-6 images, got {len(images)}: pick slides with --slides')
+    item = {'account_ids': [a['id']], 'media_urls': [], 'ratio': args.ratio, 'caption': caption[:2200]}
+    if args.music:
+        item['music'] = args.music
+    task = {'type': 'post', 'posts': [item]}
+    if args.at:
+        task['scheduled_at'] = args.at
+        task['timezone'] = args.tz
+    if args.warmup:
+        task['options'] = {'scroll': True, **({'scroll_niche': args.niche} if args.niche else {})}
+    print(f'Uploading {len(images)} image(s) as one post...', file=sys.stderr)
+    item['media_urls'] = upload(images, together=True)
+    created, done = create([task], args.dry_run)
+    when = args.at or 'Ready (not scheduled; launch with run-now)'
+    if not done:
+        print(f'DRY RUN OK: valid Post for @{a["username"]} at {when}, {len(images)} images, ratio {args.ratio}. Nothing created.')
+    else:
+        print(f'CREATED Post for @{a["username"]} at {when}: task id {created[0]["id"]}')
+
+
+def line(t):
+    when = t.get('scheduled_at') or ('Ready' if t['status'] == 'draft' else '')
+    return f"{t['type']:<8} {t['status']:<9} {when:<26} accounts={len(t.get('target_account_ids', []))} {('error: ' + t['error']) if t.get('error') else ''} id={t['id']}"
+
+
+def main():
+    ap = argparse.ArgumentParser(prog='onlyflow', description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    sub = ap.add_subparsers(dest='cmd', required=True)
+    for c in ('status', 'accounts', 'devices', 'categories'):
+        sub.add_parser(c)
+    p = sub.add_parser('tasks'); p.add_argument('--status'); p.add_argument('--limit', type=int, default=100); p.add_argument('--json', action='store_true')
+    p = sub.add_parser('task'); p.add_argument('ids', nargs='+')
+    p = sub.add_parser('upload'); p.add_argument('files', nargs='+'); p.add_argument('--together', action='store_true')
+    for c in ('post', 'set'):
+        p = sub.add_parser(c)
+        if c == 'set':
+            p.add_argument('folder'); p.add_argument('--slides', help='comma list of slide numbers, max 6')
+        else:
+            p.add_argument('--images', nargs='+', required=True)
+        p.add_argument('--account', required=True); p.add_argument('--platform', default='tiktok')
+        p.add_argument('--caption-file'); p.add_argument('--caption'); p.add_argument('--music')
+        p.add_argument('--ratio', default='9:16', choices=['9:16', '4:5', '1:1', '5:4'])
+        p.add_argument('--at', help='ISO time WITH offset, e.g. 2026-11-18T08:00:00-05:00; omit for Ready')
+        p.add_argument('--tz', default='America/New_York'); p.add_argument('--warmup', action='store_true'); p.add_argument('--niche')
+        p.add_argument('--dry-run', action='store_true')
+    p = sub.add_parser('plan'); p.add_argument('--account', required=True); p.add_argument('--start', required=True)
+    p.add_argument('--days', type=int, default=7); p.add_argument('--from-hour', type=int, default=7); p.add_argument('--to-hour', type=int, default=10)
+    p.add_argument('--tz', default='America/New_York'); p.add_argument('--count', type=int, default=7)
+    p.add_argument('--media-url', required=True, help='any URL printed by `onlyflow upload` (only used to make the draft valid)')
+    for c in ('cancel', 'restore', 'run-now'):
+        sub.add_parser(c).add_argument('id')
+    p = sub.add_parser('reschedule'); p.add_argument('id'); p.add_argument('at'); p.add_argument('--tz', default='America/New_York')
+    p = sub.add_parser('delete'); p.add_argument('ids', nargs='+'); p.add_argument('--yes', action='store_true')
+    p = sub.add_parser('stats'); p.add_argument('--days', type=int, default=7)
+    p = sub.add_parser('videos'); p.add_argument('--account')
+    a = ap.parse_args()
+
+    if a.cmd == 'status':
+        org = api('GET', '/organization')
+        devs, accs = every('/devices'), every('/accounts')
+        sched = api('GET', '/tasks?limit=100&status=scheduled,overdue')['data']
+        print(f"Organization: {org['name']}")
+        print(f'iPhones ({len(devs)}): ' + ', '.join(f"{d['name']} [{d['status']}{', connection issue' if d.get('connection_issue') else ''}]" for d in devs))
+        print(f'Accounts ({len(accs)}): ' + (', '.join(f"@{x['username']} ({x['platform']}, {x.get('status', '?')})" for x in accs) or 'none - add them in OnlyFlow'))
+        print(f'Scheduled/overdue tasks: {len(sched)}')
+        for t in sched[:20]:
+            print('  ' + line(t))
+    elif a.cmd in ('accounts', 'devices', 'categories'):
+        print(json.dumps(every('/' + a.cmd), indent=1))
+    elif a.cmd == 'tasks':
+        q = f'/tasks?limit={a.limit}' + (f'&status={a.status}' if a.status else '')
+        data = api('GET', q)['data']
+        print(json.dumps(data, indent=1) if a.json else ('\n'.join(line(t) for t in data) or 'No task.'))
+    elif a.cmd == 'task':
+        print(json.dumps(every('/tasks?ids=' + ','.join(a.ids)), indent=1))
+    elif a.cmd == 'upload':
+        for u in upload(a.files, a.together):
+            print(u)
+    elif a.cmd == 'post':
+        post_task(account(a.account, a.platform), a.images, a)
+    elif a.cmd == 'set':
+        slides = sorted(f for f in os.listdir(a.folder) if re.fullmatch(r'\d{2}\.(png|jpg|jpeg|webp)', f))
+        if a.slides:
+            want = [int(x) for x in a.slides.split(',')]
+            slides = [f'{n:02d}' + os.path.splitext(slides[0])[1] for n in want]
+        if not a.caption_file and not a.caption and os.path.exists(os.path.join(a.folder, 'caption.txt')):
+            a.caption_file = os.path.join(a.folder, 'caption.txt')
+        post_task(account(a.account, a.platform), [os.path.join(a.folder, s) for s in slides], a)
+    elif a.cmd == 'plan':
+        acc = account(a.account)
+        draft = {'type': 'post', 'posts': [{'account_ids': [acc['id']], 'media_urls': [a.media_url], 'caption': 'x', 'ratio': '9:16'}]}
+        r = api('POST', '/tasks/plan', {'tasks': [draft] * a.count, 'window': {'start_date': a.start, 'num_days': a.days,
+                'start_hour': a.from_hour, 'end_hour': a.to_hour, 'timezone': a.tz, 'shuffle': False}})
+        for t in r['tasks']:
+            print(f"{t['index'] + 1}. {t.get('scheduled_at') or 'no room'}")
+        if r.get('unplaced'):
+            print(f"{len(r['unplaced'])} could not be placed: widen the window.")
+    elif a.cmd in ('cancel', 'restore', 'run-now'):
+        body = {'cancel': True} if a.cmd == 'cancel' else {'restore': True} if a.cmd == 'restore' else {'run_now': True}
+        r = api('PATCH', f'/tasks/{a.id}', body)
+        print(f"task {r['id']}: {r['status']}")
+    elif a.cmd == 'reschedule':
+        r = api('PATCH', f'/tasks/{a.id}', {'scheduled_at': a.at, 'timezone': a.tz})
+        print(f"task {r['id']}: {r['status']} {r.get('scheduled_at')}")
+    elif a.cmd == 'delete':
+        if not a.yes:
+            raise Fail('delete removes tasks for good: add --yes (cancel keeps them restorable)')
+        print(f"Deleted {api('POST', '/tasks/delete', {'ids': a.ids})['deleted']} task(s).")
+    elif a.cmd == 'stats':
+        from datetime import date, timedelta
+        rows = every(f'/analytics/days?from={(date.today() - timedelta(days=a.days)).isoformat()}')
+        print(json.dumps(rows, indent=1))
+    elif a.cmd == 'videos':
+        q = f'/analytics/videos?account_id={account(a.account, None)["id"]}' if a.account else '/analytics/videos'
+        print(json.dumps(every(q), indent=1))
+
+
+if __name__ == '__main__':
+    try:
+        main()
+    except Fail as e:
+        print(f'onlyflow: {e}', file=sys.stderr)
+        sys.exit(1)

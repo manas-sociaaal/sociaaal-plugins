@@ -1,0 +1,19 @@
+{
+  "name": "onlyflow",
+  "version": "0.1.0",
+  "description": "Posts our organic content through OnlyFlow, which runs our TikTok and Instagram accounts on our own iPhones. Adds a command-line client for OnlyFlow's API (status, uploads, posts, scheduling, stats) and a skill that posts finished carousel sets as 6-photo TikTok posts, validated before they're created and scheduled only after the operator's go.",
+  "author": {
+    "name": "Manas Gaikwad",
+    "email": "manas@sociaaal.com"
+  },
+  "license": "Proprietary",
+  "keywords": [
+    "organic",
+    "tiktok",
+    "instagram",
+    "carousel",
+    "posting",
+    "onlyflow",
+    "sociaaal"
+  ]
+}

@@ -65,6 +65,22 @@ Full docs: see [`plugins/tokportal/README.md`](plugins/tokportal/README.md)
 
 ---
 
+### onlyflow
+
+Posts our organic content through OnlyFlow, which runs our TikTok and Instagram accounts on our own iPhones. OnlyFlow has no CLI, so this plugin adds one (`scripts/onlyflow`) over its API: status, uploads, posts, scheduling, cancel and delete, stats. Includes a skill that posts a finished carousel set (`01.png … NN.png` + `caption.txt`) as a 6-photo TikTok post (OnlyFlow's limit): validated first, scheduled only after your go.
+
+**Usage:** "schedule batch 3 on OnlyFlow, one a day at 8 am ET from Tuesday"
+**Install:** `/plugin install onlyflow@sociaaal-plugins`
+
+**Per-member prerequisites:**
+- `ONLYFLOW_API_KEY` in your environment (OnlyFlow › Settings › MCP). Never paste it into chat or commit it.
+- Python 3 (standard library only)
+- The account added and logged in inside OnlyFlow (the API can't create accounts)
+
+Full docs: see [`plugins/onlyflow/README.md`](plugins/onlyflow/README.md)
+
+---
+
 ## For maintainers — how to update a plugin
 
 When you change a plugin (edit `SKILL.md`, update `known_paths.yaml`, add a script, etc.):
